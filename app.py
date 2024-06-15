@@ -4,29 +4,29 @@ from flask_socketio import SocketIO
 import paho.mqtt.client as mqtt
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")  # 或者你可以指定特定的来源
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+# 存储消息的全局字典
+messages = {}
 
 # MQTT 消息处理函数
 def on_message(client, userdata, message):
-    # print(f'Received message: {message.payload.decode()} on topic {message.topic}')
-    socketio.emit('message', {'topic': message.topic,'data': message.payload.decode()})
+    topic = message.topic
+    data = message.payload.decode()
+    messages[topic] = data  # 更新字典中的消息
+    socketio.emit('message', {'topic': topic, 'data': data})
 
 # MQTT 连接确认函数
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+    print("Connected with result code " + str(rc))
     client.subscribe(MQTT_TOPIC)
-
-from config import MQTT_HOST, MQTT_PORT, MQTT_TOPIC, MQTT_USERNAME, MQTT_PASSWORD
-import paho.mqtt.client as mqtt
 
 # 设置 MQTT 客户端
 mqtt_client = mqtt.Client()
-
 mqtt_client.on_connect = on_connect
 mqtt_client.on_message = on_message
-# 检查是否提供了用户名和密码
 if MQTT_USERNAME and MQTT_PASSWORD:
-    mqtt_client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)  # 仅当用户名和密码存在时设置
+    mqtt_client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
 
 mqtt_client.connect(MQTT_HOST, MQTT_PORT, 60)
 mqtt_client.loop_start()
@@ -34,6 +34,12 @@ mqtt_client.loop_start()
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@socketio.on('connect')
+def handle_connect():
+    # 当有新用户连接时，将存储的消息发送给他们
+    for topic, data in messages.items():
+        socketio.emit('message', {'topic': topic, 'data': data})
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
