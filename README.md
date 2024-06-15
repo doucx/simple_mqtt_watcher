@@ -1,15 +1,14 @@
-# MQTT Flask Real-time Dashboard
+# MQTT Flask Real-time Dashboard (simpler)
 
 ## 项目描述
 
-此项目是一个实时数据仪表盘，使用 MQTT 和 Flask 构建。它能够实时显示来自 MQTT 代理的数据，支持多主题数据可视化，并提供动态更新的图表显示。
+此项目是一个简单的纯文本实时数据显示器，使用 MQTT 和 Flask 构建。它能够实时显示来自 MQTT 代理的数据，支持多主题数据可视化，并提供动态更新的图表显示。
 
-GPT4负责编写所有代码（包括这个readme）
+GPT4负责编写*几乎*所有代码。
 
 ### 功能
 
 - 实时订阅 MQTT 主题。
-- 显示数值数据的实时折线图。
 - 显示文本数据。
 - 支持 MQTT 用户名和密码验证。
 
@@ -70,7 +69,6 @@ GPT4负责编写所有代码（包括这个readme）
 
 - **Front-end**: HTML, JavaScript
 - **Back-end**: Python, Flask, paho-MQTT
-- **Data Visualization**: Chart.js
 
 ## 版权声明
 
