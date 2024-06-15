@@ -4,7 +4,7 @@ from flask_socketio import SocketIO
 import paho.mqtt.client as mqtt
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")  # 或者你可以指定特定的来源
 
 # MQTT 消息处理函数
 def on_message(client, userdata, message):
