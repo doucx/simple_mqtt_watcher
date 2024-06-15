@@ -6,14 +6,10 @@ import paho.mqtt.client as mqtt
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-# 存储消息的全局字典
-messages = {}
-
 # MQTT 消息处理函数
 def on_message(client, userdata, message):
     topic = message.topic
     data = message.payload.decode()
-    messages[topic] = data  # 更新字典中的消息
     socketio.emit('message', {'topic': topic, 'data': data})
 
 # MQTT 连接确认函数
@@ -38,8 +34,8 @@ def index():
 @socketio.on('connect')
 def handle_connect():
     # 当有新用户连接时，将存储的消息发送给他们
-    for topic, data in messages.items():
-        socketio.emit('message', {'topic': topic, 'data': data})
+    mqtt_client.connect(MQTT_HOST, MQTT_PORT, 60)
+    mqtt_client.loop_start()
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
