@@ -4,12 +4,13 @@ from flask_socketio import SocketIO
 import paho.mqtt.client as mqtt
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")  # 或者你可以指定特定的来源
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # MQTT 消息处理函数
 def on_message(client, userdata, message):
-    # print(f'Received message: {message.payload.decode()} on topic {message.topic}')
-    socketio.emit('message', {'topic': message.topic,'data': message.payload.decode()})
+    topic = message.topic
+    data = message.payload.decode()
+    socketio.emit('message', {'topic': topic, 'data': data})
 
 # MQTT 连接确认函数
 def on_connect(client, userdata, flags, rc):
@@ -34,6 +35,12 @@ mqtt_client.loop_start()
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@socketio.on('connect')
+def handle_connect():
+    # 当有新用户连接时，将存储的消息发送给他们
+    mqtt_client.connect(MQTT_HOST, MQTT_PORT, 60)
+    mqtt_client.loop_start()
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
