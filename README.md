@@ -72,6 +72,12 @@ GPT4负责编写所有代码（包括这个readme）
 - **Back-end**: Python, Flask, paho-MQTT
 - **Data Visualization**: Chart.js
 
+## TODO
+
+- 更好的仪表盘设置
+- 让用户自己设置仪表盘类型
+- 保存用户的设置
+
 ## 版权声明
 
 本项目是在 MIT 许可下发布的。详情见 [LICENSE](LICENSE) 文件。
